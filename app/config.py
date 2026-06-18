@@ -42,14 +42,24 @@ def _corrigir_senha_url(url: str) -> str:
     O SQLAlchemy usa o primeiro '@' como separador userinfo/host — se a senha
     contiver '@' sem encoding, a URL é interpretada erradamente.
     """
-    m = re.match(r"^(.+://)([^:]+):([^@]+)@(.+)$", url)
-    if not m:
+    idx_ultimo_arroba = url.rfind("@")
+    if idx_ultimo_arroba == -1:
         return url
-    _scheme, _user, _senha, _resto = m.groups()
-    _senha_corrigida = quote_plus(_senha)
-    if _senha_corrigida == _senha:
+    idx_esquema = url.find("://")
+    if idx_esquema == -1:
         return url
-    return f"{_scheme}{_user}:{_senha_corrigida}@{_resto}"
+    userinfo = url[idx_esquema + 3:idx_ultimo_arroba]
+    resto = url[idx_ultimo_arroba + 1:]
+    colon = userinfo.find(":")
+    if colon == -1:
+        return url
+    senha = userinfo[colon + 1:]
+    if not senha or "%" in senha:
+        return url
+    senha_corrigida = quote_plus(senha)
+    if senha_corrigida == senha:
+        return url
+    return f"{url[:idx_esquema + 3]}{userinfo[:colon + 1]}{senha_corrigida}@{resto}"
 
 
 # ------------------------------- Banco de dados ----------------------------
