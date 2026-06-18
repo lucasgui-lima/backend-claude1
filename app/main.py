@@ -5,7 +5,6 @@ Executar em desenvolvimento:
 Documentação interativa: http://localhost:8000/docs
 """
 import logging
-import traceback
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -63,10 +62,7 @@ async def erro_inesperado(request: Request, exc: Exception):
     logger.exception("Erro não tratado em %s %s", request.method, request.url.path)
     return JSONResponse(
         status_code=500,
-        content={
-            "detail": "Erro interno do servidor. Tente novamente.",
-            "error": str(exc),
-        },
+        content={"detail": "Erro interno do servidor. Tente novamente."},
     )
 
 

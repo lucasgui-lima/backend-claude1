@@ -9,6 +9,7 @@ Variáveis de ambiente (obrigatórias em produção):
   CORS_ORIGINS  → origens permitidas (separadas por vírgula)
 """
 import os
+import re
 import warnings
 from urllib.parse import quote_plus
 
@@ -35,6 +36,22 @@ if SECRET_KEY == _DEFAULT_SECRET:
     )
 
 
+def _corrigir_senha_url(url: str) -> str:
+    """Garante que a senha na URL esteja percent-encoded.
+
+    O SQLAlchemy usa o primeiro '@' como separador userinfo/host — se a senha
+    contiver '@' sem encoding, a URL é interpretada erradamente.
+    """
+    m = re.match(r"^(.+://)([^:]+):([^@]+)@(.+)$", url)
+    if not m:
+        return url
+    _scheme, _user, _senha, _resto = m.groups()
+    _senha_corrigida = quote_plus(_senha)
+    if _senha_corrigida == _senha:
+        return url
+    return f"{_scheme}{_user}:{_senha_corrigida}@{_resto}"
+
+
 # ------------------------------- Banco de dados ----------------------------
 def _montar_database_url() -> str:
     """Monta a URL do banco com a senha percent-encoded.
@@ -45,6 +62,7 @@ def _montar_database_url() -> str:
     """
     url = os.getenv("DATABASE_URL")
     if url:
+        url = _corrigir_senha_url(url)
         if "sslmode" not in url:
             url += ("&" if "?" in url else "?") + "sslmode=require"
         return url
