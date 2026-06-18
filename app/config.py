@@ -45,6 +45,8 @@ def _montar_database_url() -> str:
     """
     url = os.getenv("DATABASE_URL")
     if url:
+        if "sslmode" not in url:
+            url += ("&" if "?" in url else "?") + "sslmode=require"
         return url
 
     # Permite sobrescrever via env separadas, e percent-encoda a senha.
@@ -53,7 +55,7 @@ def _montar_database_url() -> str:
     host = os.getenv("DB_HOST", "db.tltuihtisnmmabojukal.supabase.co")
     porta = os.getenv("DB_PORT", "5432")
     nome = os.getenv("DB_NAME", "postgres")
-    return f"postgresql+psycopg2://{user}:{senha}@{host}:{porta}/{nome}"
+    return f"postgresql+psycopg2://{user}:{senha}@{host}:{porta}/{nome}?sslmode=require"
 
 
 DATABASE_URL = _montar_database_url()
