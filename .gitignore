@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs e outputs de desenvolvimento
+*.log
+*_output.txt
+*_error.txt
+backend_output.txt
+backend_error.txt
+mobile_output.txt
+mobile_error.txt
+
+# Banco local
+*.db
+*.sqlite
+*.sqlite3
+manutencao.db
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Flet / build
+build/
+dist/
+*.apk
+*.aab
+*.ipa
+upload.jks
+mobile/storage/

@@ -1,0 +1,13 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+sqlalchemy>=2.0
+pydantic>=2.6
+pydantic[email]
+PyJWT>=2.7
+python-multipart>=0.0.9
+
+# PostgreSQL (obrigatório para Supabase/produção)
+psycopg2-binary>=2.9
+
+# Utilitários para produção
+python-dotenv>=1.0
