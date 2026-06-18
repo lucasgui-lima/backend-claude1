@@ -5,6 +5,7 @@ Executar em desenvolvimento:
 Documentação interativa: http://localhost:8000/docs
 """
 import logging
+import traceback
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -62,10 +63,27 @@ async def erro_inesperado(request: Request, exc: Exception):
     logger.exception("Erro não tratado em %s %s", request.method, request.url.path)
     return JSONResponse(
         status_code=500,
-        content={"detail": "Erro interno do servidor. Tente novamente."},
+        content={
+            "detail": "Erro interno do servidor. Tente novamente.",
+            "error": str(exc),
+        },
     )
 
 
 @app.get("/", tags=["health"])
 def health():
     return {"status": "ok", "app": "gestao-manutencao", "versao": "1.0.0"}
+
+
+@app.get("/health/db", tags=["health"])
+def health_db():
+    """Verifica conectividade com o banco de dados."""
+    from sqlalchemy import text
+    from .database import SessionLocal
+    try:
+        db = SessionLocal()
+        result = db.execute(text("SELECT 1")).scalar()
+        db.close()
+        return {"status": "ok", "database": "conectado", "result": result}
+    except Exception as e:
+        return {"status": "erro", "database": "falha", "error": str(e)}
