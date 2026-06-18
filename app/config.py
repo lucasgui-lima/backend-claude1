@@ -78,10 +78,10 @@ def _montar_database_url() -> str:
         return url
 
     # Permite sobrescrever via env separadas, e percent-encoda a senha.
-    user = os.getenv("DB_USER", "postgres")
+    user = os.getenv("DB_USER", f"postgres.tltuihtisnmmabojukal")
     senha = quote_plus(os.getenv("DB_PASSWORD", "S@gui126307"))
-    host = os.getenv("DB_HOST", "db.tltuihtisnmmabojukal.supabase.co")
-    porta = os.getenv("DB_PORT", "5432")
+    host = os.getenv("DB_HOST", "aws-1-us-east-2.pooler.supabase.com")
+    porta = os.getenv("DB_PORT", "6543")
     nome = os.getenv("DB_NAME", "postgres")
     return f"postgresql+psycopg2://{user}:{senha}@{host}:{porta}/{nome}?sslmode=require"
 
